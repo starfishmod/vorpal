@@ -400,7 +400,7 @@ function getMatchData(input, cb) {
     return;
   }
 
-  function handleDataFormat(str, config, callback) {
+  function handleDataFormat(str, config, callback, name) {
     var data = [];
     if (_.isArray(config)) {
       data = config;
@@ -408,7 +408,7 @@ function getMatchData(input, cb) {
       var cbk = config.length < 2 ? function () {} : function (res) {
         callback(res || []);
       };
-      var res = config(str, cbk);
+      var res = config(str, cbk, name);
       if (res && _.isFunction(res.then)) {
         res.then(function (resp) {
           callback(resp);
@@ -438,7 +438,8 @@ function getMatchData(input, cb) {
 
   var conf = cmd._autocomplete;
   conf = conf && conf.data ? conf.data : conf;
-  handleDataFormat(string, conf, cb);
+  let argToUse = input.match._args[input.raw.replace(/\"[^\"]*\"/g,'hhh').split(/\s+/).length - 2] || {};
+  handleDataFormat(string, conf, cb, argToUse.name||'');
   return;
 }
 
